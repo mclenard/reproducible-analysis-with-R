@@ -1,0 +1,191 @@
+---
+title: "More about Quarto"
+format:
+  html:
+    code-fold: true
+bibliography: references.bib
+toc: true
+number-sections: true
+---
+
+```{r}
+#| label: load-packages
+#| include: false
+library(tidyverse)
+```
+
+```{r}
+#| label: load-data
+#| include: false
+penguins <- read_csv("../data/penguins.csv")
+```
+
+# Computations
+
+Code and its output are both displayed in the rendered document by default.
+
+```{r}
+#| label: fig-scatterplot
+#| fig-cap: "Body mass and bill length for penguins"
+#| fig-alt: "Scatterplot of body mass vs. bill length for penguins. The plot displays a positive relationship between body mass and bill length."
+#| fig-width: 6
+#| fig-height: 3
+
+ggplot(penguins) + 
+  aes(x = body_mass_g, y = bill_length_mm) + 
+  geom_point()
+```
+
+You can tweak the defaults by adding to the YAML header at the very top. Let's try this example: for some documents, you might want to hide all the code.
+
+--\> Go to the YAML header and specify (copy and paste):
+
+```         
+execute:
+  echo: false
+```
+
+(Note the two spaces before echo.)
+
+Render the file.
+
+You can also override the document level settings. For example, you might want to selectively render some code chunks.
+
+--\> Go to the fig-scatterplot chunk, and add `#| echo: true`. Render. The code is now included in the fig-scatterplot chunk.
+
+## Code Folding
+
+You can allow people to view the code only if they want to. Try the `code-fold` option.
+
+--\> Remove the `execute: echo` option. Add in the `code-fold` option under `html`, like so:
+
+```         
+---
+title: "More about Quarto"
+format:
+  html:
+    code-fold: true
+---
+```
+
+--\> Render/save again, and see the Code widgets for each chunk.
+
+## Figures
+
+Quarto gives you the ability to improve the appearance and accessibility of your plots. We can change the size of our plot with `fit-width` and `fig-height`, provide a caption with `fig-cap` , add alt text for accessibility with `fig-alt`.
+
+--\> Copy and paste over the existing code-block options into the plot above.
+
+```         
+#| label: fig-scatterplot
+#| fig-cap: "Body mass and bill length for penguins"
+#| fig-alt: "Scatterplot of body mass vs. bill length for penguins. The plot displays a positive relationship between body mass and bill length."
+#| fig-width: 6
+#| fig-height: 3
+```
+
+You can reference the plot in the text:
+
+@fig-scatterplot displays a positive relationship between body mass and bill length.
+
+## Inline Code
+
+You can also include inline code (code not inside a code chunk) by surrounding your code with backticks and prefacing the code with r.
+
+--\> Include inline code below. Replace the ... with your code.
+
+--\> Code: nrow(penguins). Include backticks and preface the code with r. You can also use the dropdown: Format \> Code for the backticks.
+
+There are `r nrow(penguins)` penguins in the dataset.
+
+--\> Render.
+
+The sentence will display the calculated number of observations.
+
+If your code is a bit longer, you can also create an object in a code chunk with `echo: false`, and call that object in the inline code.
+
+```{r}
+#| echo: false
+
+mean_bill <- round(mean(penguins$bill_length_mm, na.rm=TRUE), 2)
+```
+
+The average bill length of the penguins in our data is `r mean_bill`.
+
+## Caching
+
+If you have code chunks that will take a long time to compute, you can cache the results. You can do this globally with a YAML header:
+
+```         
+execute:
+  cache: true
+```
+
+Or you can cache individual code chunks:
+
+```         
+#| cache: true
+```
+
+## Equations
+
+You can add in equations using LaTeX math.
+
+--\> Go to Insert in the toolbar, LaTeX Math, then Display Math. Type in y = x\^2.
+
+$$
+y = x^2
+$$
+
+## Citations
+
+It is easy to include citations in Quarto. You can either connect Quarto to Zotero, import a .bibtex file that has a list of citations, import citations by their DOI, and a few other methods.
+
+--\> Go to Insert in the Toolbar, Select Citation, Select **From DOI** on the left and copy-and-paste the DOI `10.5281/zenodo.3960218` in the search bar and hit **Search**. Then, select the found reference, and **Insert** it into your document, below (before the period). Render.
+
+We are using the Palmer Penguins dataset [@horst2020].
+
+Notice the YAML header added:
+
+```         
+#| bibliography: references.bib
+```
+
+And we now have the *references.bib* file in our project directory.
+
+## Table of Contents and Themes
+
+We can do a lot to fine tune our document. There are so many options here that we can't cover them all. Let's just do just a couple of simple changes to our document. We will add a Table of Contents and change the Theme.
+
+--\> Add this to the YAML header.
+
+```         
+toc: true
+number-sections: true
+```
+
+--\>Now add a theme to change the look and style of the document. Find more [themes](https://quarto.org/docs/output-formats/html-themes.html).
+
+```         
+format:
+  html:
+    theme: quartz
+```
+
+--\> Render.
+
+## Presentations and PDFs
+
+Finally, let's look at how to make Quarto documents from scratch, including Presentations and PDFs.
+
+--\> Go to File...New File...Quarto Presentation.
+
+--\> Go to File...New File...Quarto Document...PDF.
+
+Note that PDF output requires a LaTeX installation, like tinytex.
+
+You can install with the following command, in the Terminal.
+
+```         
+quarto install tool tinytex
+```
